@@ -3,7 +3,6 @@ let transactions = JSON.parse(localStorage.getItem('gs_transactions')) || [];
 let notices = JSON.parse(localStorage.getItem('gs_notices')) || [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ডিফল্টভাবে আজকের তারিখ ইনপুটে সেট করা
     const todayStr = new Date().toISOString().split('T')[0];
     if(document.getElementById('txn-date')) document.getElementById('txn-date').value = todayStr;
     if(document.getElementById('m-date')) document.getElementById('m-date').value = todayStr;
@@ -26,7 +25,6 @@ function switchTab(tabId) {
     event.currentTarget.classList.add('active');
 }
 
-// তারিখ ফরম্যাট রূপান্তর (YYYY-MM-DD থেকে সুন্দর বাংলা স্টাইলে)
 function formatDate(dateString) {
     if(!dateString) return '';
     const parts = dateString.split('-');
@@ -34,13 +32,26 @@ function formatDate(dateString) {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
-// ১. সদস্য ভর্তি
+// সদস্য ভর্তি (ছবি সহ)
 function handleRegisterMember(e) {
     e.preventDefault();
     
+    const photoInput = document.getElementById('m-photo');
     const rawDate = document.getElementById('m-date').value;
     const formattedDate = formatDate(rawDate);
 
+    if (photoInput.files && photoInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (uploadEvent) {
+            saveMemberData(uploadEvent.target.result, formattedDate);
+        };
+        reader.readAsDataURL(photoInput.files[0]);
+    } else {
+        saveMemberData('', formattedDate);
+    }
+}
+
+function saveMemberData(photoBase64, formattedDate) {
     const newMember = {
         id: 'GS-' + (1000 + members.length + 1),
         name: document.getElementById('m-name').value,
@@ -49,7 +60,7 @@ function handleRegisterMember(e) {
         phone: document.getElementById('m-phone').value,
         nid: document.getElementById('m-nid').value,
         center: document.getElementById('m-center').value,
-        village: document.getElementById('m-village').value,
+        photo: photoBase64,
         savings: parseFloat(document.getElementById('m-init-savings').value) || 0,
         loan: parseFloat(document.getElementById('m-init-loan').value) || 0,
         status: 'সক্রিয়',
@@ -79,14 +90,16 @@ function handleRegisterMember(e) {
     renderCenterView();
 }
 
-// ২. কেন্দ্রভিত্তিক দৃশ্য
+// কেন্দ্রভিত্তিক দৃশ্য
 function renderCenterView() {
-    const selectedCenter = document.getElementById('center-filter').value;
+    const centerFilterEl = document.getElementById('center-filter');
+    if(!centerFilterEl) return;
+    const selectedCenter = centerFilterEl.value;
     const container = document.getElementById('center-members-container');
     const centerMembers = members.filter(m => m.center === selectedCenter && m.status === 'সক্রিয়');
 
     if(centerMembers.length === 0) {
-        container.innerHTML = `<p class="text-center" style="padding: 20px; color: #777;">এই কেন্দ্রে কোনো সক্রিয় সদস্য নেই।</p>`;
+        container.innerHTML = `<p class="text-center" style="padding: 20px; color: #777;">(${selectedCenter})-তে কোনো সক্রিয় সদস্য নেই।</p>`;
         return;
     }
 
@@ -94,12 +107,13 @@ function renderCenterView() {
         <table class="data-table">
             <thead>
                 <tr>
+                    <th>ছবি</th>
                     <th>আইডি</th>
                     <th>সদস্যের নাম</th>
                     <th>স্বামী/পিতার নাম</th>
                     <th>মোবাইল</th>
-                    <th>সঞ্চয় স্থিতি</th>
-                    <th>ঋণ স্থিতি</th>
+                    <th>সঞ্চয়</th>
+                    <th>ঋণ</th>
                     <th>প্রোফাইল</th>
                 </tr>
             </thead>
@@ -107,8 +121,10 @@ function renderCenterView() {
     `;
 
     centerMembers.forEach(m => {
+        const photoTag = m.photo ? `<img src="${m.photo}" class="table-avatar">` : `<i class="fa-solid fa-user-circle" style="font-size:35px; color:#aaa;"></i>`;
         html += `
             <tr>
+                <td>${photoTag}</td>
                 <td><b>${m.id}</b></td>
                 <td>${m.name}</td>
                 <td>${m.guardian}</td>
@@ -124,22 +140,25 @@ function renderCenterView() {
     container.innerHTML = html;
 }
 
-// ৩. সদস্য তালিকা ও প্রোফাইল
 function renderMembersTable() {
     const tableBody = document.getElementById('members-list-table');
-    const search = document.getElementById('search-member').value.toLowerCase();
+    const searchEl = document.getElementById('search-member');
+    if(!tableBody) return;
+    const search = searchEl ? searchEl.value.toLowerCase() : '';
     tableBody.innerHTML = '';
 
     const activeList = members.filter(m => m.status === 'সক্রিয়' && (m.name.toLowerCase().includes(search) || m.phone.includes(search)));
 
     if (activeList.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="7" class="text-center">কোনো সদস্য পাওয়া যায়নি</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">কোনো সদস্য পাওয়া যায়নি</td></tr>';
         return;
     }
 
     activeList.forEach(m => {
+        const photoTag = m.photo ? `<img src="${m.photo}" class="table-avatar">` : `<i class="fa-solid fa-user-circle" style="font-size:35px; color:#aaa;"></i>`;
         const row = document.createElement('tr');
         row.innerHTML = `
+            <td>${photoTag}</td>
             <td><b>${m.id}</b></td>
             <td>${m.name}</td>
             <td>${m.center}</td>
@@ -159,6 +178,8 @@ function openProfile(memberId) {
     const m = members.find(item => item.id === memberId);
     if (!m) return;
 
+    const photoTag = m.photo ? `<img src="${m.photo}" class="profile-avatar">` : `<i class="fa-solid fa-user-circle" style="font-size:80px; color:#ccc; margin-bottom:10px;"></i>`;
+
     let historyHtml = '';
     if(m.history && m.history.length > 0) {
         m.history.slice().reverse().forEach(h => {
@@ -169,21 +190,19 @@ function openProfile(memberId) {
     }
 
     document.getElementById('profile-details-body').innerHTML = `
-        <h2 style="color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-user-gear"></i> সদস্যের বিস্তারিত প্রোফাইল</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 14px;">
-            <p><b>সদস্য আইডি:</b> ${m.id}</p>
-            <p><b>নাম:</b> ${m.name}</p>
+        ${photoTag}
+        <h2 style="color: var(--primary); margin-bottom: 15px;">${m.name} (${m.id})</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 14px; text-align: left;">
             <p><b>স্বামী/পিতার নাম:</b> ${m.guardian}</p>
             <p><b>নমিনী:</b> ${m.nominee}</p>
             <p><b>মোবাইল:</b> ${m.phone}</p>
             <p><b>এনআইডি:</b> ${m.nid || 'নেই'}</p>
-            <p><b>কেন্দ্র:</b> ${m.center}</p>
-            <p><b>গ্রাম:</b> ${m.village}</p>
+            <p><b>গ্রাম/কেন্দ্র:</b> ${m.center}</p>
             <p><b>ভর্তির তারিখ:</b> ${m.joinedDate}</p>
             <p><b>বর্তমান সঞ্চয়:</b> <span style="color: green; font-weight: bold;">৳ ${m.savings}</span></p>
             <p><b>বর্তমান ঋণ:</b> <span style="color: red; font-weight: bold;">৳ ${m.loan}</span></p>
         </div>
-        <h3 style="margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 5px;">সঞ্চয় ও কিস্তি প্রদানের লেজার ইতিহাস</h3>
+        <h3 style="margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 5px; text-align: left;">সঞ্চয় ও কিস্তি প্রদানের লেজার ইতিহাস</h3>
         <table class="data-table">
             <thead><tr><th>তারিখ</th><th>বিবরণ</th><th>পরিমাণ</th></tr></thead>
             <tbody>${historyHtml}</tbody>
@@ -197,7 +216,6 @@ function closeProfileModal() {
     document.getElementById('profile-modal').style.display = 'none';
 }
 
-// ৪. ক্যালেন্ডার সহ লেনদেন ও রসিদ পোস্টিং
 function handleTransaction(e) {
     e.preventDefault();
     const memberId = document.getElementById('txn-member').value;
@@ -226,7 +244,7 @@ function handleTransaction(e) {
     document.getElementById('receipt-details').innerHTML = `
         <p><b>লেনদেনের তারিখ:</b> ${txnDate}</p>
         <p><b>সদস্যের নাম:</b> ${member.name} (${member.id})</p>
-        <p><b>কেন্দ্র:</b> ${member.center}</p>
+        <p><b>গ্রাম/কেন্দ্র:</b> ${member.center}</p>
         <p><b>লেনদেনের বিবরণ:</b> ${txnLabel}</p>
         <p><b>টাকার পরিমাণ:</b> ৳ ${amount} /-</p>
         <p><b>সর্বমোট সঞ্চয় স্থিতি:</b> ৳ ${member.savings}</p>
@@ -246,7 +264,6 @@ function handleTransaction(e) {
     }
 }
 
-// ৫. সদস্য বাতিল ও পুনরুদ্ধার
 function archiveMember(memberId) {
     const member = members.find(m => m.id === memberId);
     if(member && confirm(`${member.name}-এর সদস্যপদ বাতিল বা আর্কাইভ করতে চান?`)) {
@@ -262,17 +279,20 @@ function archiveMember(memberId) {
 
 function renderArchiveTable() {
     const tableBody = document.getElementById('archive-list-table');
+    if(!tableBody) return;
     tableBody.innerHTML = '';
     const archivedList = members.filter(m => m.status === 'বাতিলকৃত');
 
     if(archivedList.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">কোনো বাতিলকৃত সদস্য নেই</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" class="text-center">কোনো বাতিলকৃত সদস্য নেই</td></tr>';
         return;
     }
 
     archivedList.forEach(m => {
+        const photoTag = m.photo ? `<img src="${m.photo}" class="table-avatar">` : `<i class="fa-solid fa-user-circle" style="font-size:35px; color:#aaa;"></i>`;
         tableBody.innerHTML += `
             <tr>
+                <td>${photoTag}</td>
                 <td><b>${m.id}</b></td>
                 <td>${m.name}</td>
                 <td>${m.center}</td>
@@ -311,6 +331,7 @@ function permanentDelete(memberId) {
 
 function populateMemberDropdown() {
     const select = document.getElementById('txn-member');
+    if(!select) return;
     select.innerHTML = '<option value="">-- সদস্য নির্বাচন করুন --</option>';
     members.filter(m => m.status === 'সক্রিয়').forEach(m => {
         select.innerHTML += `<option value="${m.id}">${m.name} - ${m.center} (${m.phone})</option>`;
@@ -322,19 +343,19 @@ function updateDashboardStats() {
     const totalSavings = members.reduce((sum, m) => sum + m.savings, 0);
     const totalLoans = members.reduce((sum, m) => sum + m.loan, 0);
     
-    // আজকের তারিখের পোস্টিং হিসাব
     const now = new Date();
     const todayFormatted = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
     const todayTotal = transactions.filter(t => t.date === todayFormatted).reduce((sum, t) => sum + t.amount, 0);
     
-    document.getElementById('stat-total-members').innerText = activeMembers.length;
-    document.getElementById('stat-total-savings').innerText = '৳ ' + totalSavings;
-    document.getElementById('stat-total-loans').innerText = '৳ ' + totalLoans;
-    document.getElementById('stat-today-collection').innerText = '৳ ' + todayTotal;
+    if(document.getElementById('stat-total-members')) document.getElementById('stat-total-members').innerText = activeMembers.length;
+    if(document.getElementById('stat-total-savings')) document.getElementById('stat-total-savings').innerText = '৳ ' + totalSavings;
+    if(document.getElementById('stat-total-loans')) document.getElementById('stat-total-loans').innerText = '৳ ' + totalLoans;
+    if(document.getElementById('stat-today-collection')) document.getElementById('stat-today-collection').innerText = '৳ ' + todayTotal;
 }
 
 function renderRecentTransactions() {
     const body = document.getElementById('recent-transactions');
+    if(!body) return;
     body.innerHTML = '';
     const recent = transactions.slice(-8).reverse();
     
@@ -374,6 +395,7 @@ function handlePublishNotice(e) {
 
 function renderNotices() {
     const container = document.getElementById('notice-list-container');
+    if(!container) return;
     container.innerHTML = '';
     
     if(notices.length === 0) {
