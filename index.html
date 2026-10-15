@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>গ্রামীণ সেবা - অফিস ব্যবস্থাপনা</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- সাইডবার -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-hands-holding-child brand-icon"></i>
+                <h2>গ্রামীণ সেবা</h2>
+                <p>সোনালী মোড় শাখা, ধুলবাড়ী</p>
+            </div>
+            <nav class="menu">
+                <button class="nav-btn active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-line"></i> ড্যাশবোর্ড</button>
+                <button class="nav-btn" onclick="switchTab('members')"><i class="fa-solid fa-users"></i> সদস্য ব্যবস্থাপনা</button>
+                <button class="nav-btn" onclick="switchTab('add-member')"><i class="fa-solid fa-user-plus"></i> নতুন সদস্য ভর্তি</button>
+                <button class="nav-btn" onclick="switchTab('savings-loan')"><i class="fa-solid fa-piggy-bank"></i> সঞ্চয় ও ঋণ লেনদেন</button>
+                <button class="nav-btn" onclick="switchTab('notices')"><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</button>
+            </nav>
+        </aside>
+
+        <!-- মূল কন্টেন্ট এলাকা -->
+        <main class="main-content">
+            <header class="top-header">
+                <h1 id="page-title">অফিস ব্যবস্থাপনা ড্যাশবোর্ড</h1>
+                <div class="user-profile">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>শাখা ব্যবস্থাপক</span>
+                </div>
+            </header>
+
+            <!-- ১. ড্যাশবোর্ড সেকশন -->
+            <section id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fa-solid fa-users stat-icon icon-blue"></i>
+                        <div>
+                            <p>মোট সদস্য</p>
+                            <h3 id="stat-total-members">০</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-vault stat-icon icon-green"></i>
+                        <div>
+                            <p>মোট সঞ্চয় স্থিতি</p>
+                            <h3 id="stat-total-savings">৳ ০</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-hand-holding-dollar stat-icon icon-orange"></i>
+                        <div>
+                            <p>মোট বিতরণকৃত ঋণ</p>
+                            <h3 id="stat-total-loans">৳ ০</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-file-invoice-dollar stat-icon icon-red"></i>
+                        <div>
+                            <p>আজকের কালেকশন</p>
+                            <h3 id="stat-today-collection">৳ ০</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-tables">
+                    <div class="card">
+                        <h3>সাম্প্রতিক লেনদেন</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>তারিখ</th>
+                                    <th>সদস্য নাম</th>
+                                    <th>ধরন</th>
+                                    <th>পরিমাণ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-transactions">
+                                <tr><td colspan="4" class="text-center">কোনো লেনদেন পাওয়া যায়নি</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ২. নতুন সদস্য ভর্তি ফর্ম -->
+            <section id="add-member" class="tab-content">
+                <div class="card">
+                    <h2><i class="fa-solid fa-user-plus"></i> নতুন সদস্য ভর্তি ফরম</h2>
+                    <form id="member-form" onsubmit="handleRegisterMember(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>সদস্যের পুরো নাম *</label>
+                                <input type="text" id="m-name" required placeholder="নাম লিখুন">
+                            </div>
+                            <div class="form-group">
+                                <label>স্বামী / পিতার নাম *</label>
+                                <input type="text" id="m-guardian" required placeholder="স্বামী বা পিতার নাম">
+                            </div>
+                            <div class="form-group">
+                                <label>মোবাইল নম্বর *</label>
+                                <input type="tel" id="m-phone" required placeholder="০১৭xxxxxxxx">
+                            </div>
+                            <div class="form-group">
+                                <label>এনআইডি / জন্ম নিবন্ধন নম্বর</label>
+                                <input type="text" id="m-nid" placeholder="NID / BRN নম্বর">
+                            </div>
+                            <div class="form-group">
+                                <label>গ্রাম / মহল্লা *</label>
+                                <input type="text" id="m-village" required placeholder="গ্রাম বা এলাকার নাম">
+                            </div>
+                            <div class="form-group">
+                                <label>থানা / উপজেলা *</label>
+                                <input type="text" id="m-thana" required value="টাঙ্গাইল সদর">
+                            </div>
+                            <div class="form-group">
+                                <label>জেলা *</label>
+                                <input type="text" id="m-district" required value="টাঙ্গাইল">
+                            </div>
+                            <div class="form-group">
+                                <label>প্রাথমিক সঞ্চয় জমাদান (৳)</label>
+                                <input type="number" id="m-init-savings" value="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>প্রাথমিক ঋণ প্রদান (৳)</label>
+                                <input type="number" id="m-init-loan" value="0" min="0">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> সদস্য ভর্তি সম্পন্ন করুন</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ৩. সদস্য তালিকা ও তথ্য ব্যবস্থাপনা -->
+            <section id="members" class="tab-content">
+                <div class="card">
+                    <div class="table-header">
+                        <h2><i class="fa-solid fa-users"></i> সদস্য তালিকা</h2>
+                        <input type="text" id="search-member" oninput="renderMembersTable()" placeholder="সদস্যের নাম বা নম্বর দিয়ে খুঁজুন...">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>আইডি</th>
+                                    <th>সদস্যের নাম</th>
+                                    <th>স্বামী/পিতার নাম</th>
+                                    <th>ঠিকানা (গ্রাম, থানা, জেলা)</th>
+                                    <th>মোবাইল</th>
+                                    <th>সঞ্চয় স্থিতি</th>
+                                    <th>ঋণ স্থিতি</th>
+                                    <th>স্ট্যাটাস</th>
+                                    <th>অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="members-list-table">
+                                <!-- ডায়নামিকালি লোড হবে -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ৪. সঞ্চয় ও ঋণ লেনদেন -->
+            <section id="savings-loan" class="tab-content">
+                <div class="card">
+                    <h2><i class="fa-solid fa-money-bill-transfer"></i> সঞ্চয় ও ঋণ লেনদেন ইনপুট</h2>
+                    <form id="txn-form" onsubmit="handleTransaction(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>সদস্য নির্বাচন করুন *</label>
+                                <select id="txn-member" required>
+                                    <option value="">-- সদস্য নির্বাচন করুন --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>লেনদেনের ধরন *</label>
+                                <select id="txn-type" required>
+                                    <option value="savings_deposit">সঞ্চয় জমা</option>
+                                    <option value="savings_withdraw">সঞ্চয় উত্তোলন</option>
+                                    <option value="loan_repay">ঋণের কিস্তি জমা</option>
+                                    <option value="loan_disburse">নতুন ঋণ প্রদান</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>টাকার পরিমাণ (৳) *</label>
+                                <input type="number" id="txn-amount" min="1" required placeholder="পরিমাণ লিখুন">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-plus-circle"></i> লেনদেন সেভ করুন</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ৫. নোটিশ বোর্ড -->
+            <section id="notices" class="tab-content">
+                <div class="card">
+                    <h2><i class="fa-solid fa-bullhorn"></i> নতুন নোটিশ প্রকাশ করুন</h2>
+                    <form id="notice-form" onsubmit="handlePublishNotice(event)">
+                        <div class="form-group">
+                            <label>নোটিশ শিরোনাম</label>
+                            <input type="text" id="notice-title" required placeholder="শিরোনাম দিন">
+                        </div>
+                        <div class="form-group">
+                            <label>বিস্তারিত নোটিশ</label>
+                            <textarea id="notice-body" rows="4" required placeholder="নোটিশের বিস্তারিত লিখুন..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">প্রকাশ করুন</button>
+                    </form>
+                </div>
+                <div class="card mt-20">
+                    <h3>সাম্প্রতিক নোটিশসমূহ</h3>
+                    <div id="notice-list-container">
+                        <!-- ডায়নামিকালি লোড হবে -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
