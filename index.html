@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>গ্রামীণ সেবা - অফিস ব্যবস্থাপনা সিস্টেম</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>গ্রামীণ সেবা</h2>
+        <p class="branch-tag">সোনালী মোড় শাখা, ধুলবাড়ী</p>
+        <ul>
+            <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fa-solid fa-chart-line"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="#" onclick="showSection('members')"><i class="fa-solid fa-users"></i> সদস্য ব্যবস্থাপনা</a></li>
+            <li><a href="#" onclick="showSection('transactions')"><i class="fa-solid fa-money-bill-transfer"></i> লেনদেন / কিস্তি</a></li>
+            <li><a href="#" onclick="showSection('notices')"><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>অফিস ব্যবস্থাপনা ড্যাশবোর্ড</h1>
+            <div class="user-info">
+                <span>শাখা ব্যবস্থাপক</span>
+            </div>
+        </header>
+
+        <!-- ড্যাশবোর্ড সেকশন -->
+        <section id="dashboard" class="content-section active">
+            <div class="cards">
+                <div class="card">
+                    <h3>মোট সদস্য</h3>
+                    <p id="total-members-count">0</p>
+                </div>
+                <div class="card">
+                    <h3>আজকের কালেকশন</h3>
+                    <p id="today-collection">৳ 0</p>
+                </div>
+                <div class="card">
+                    <h3>মোট প্রদানকৃত ঋণ</h3>
+                    <p id="total-loans">৳ 0</p>
+                </div>
+            </div>
+            
+            <div class="recent-activity">
+                <h2>সাম্প্রতিক লেনদেন</h2>
+                <table id="recent-transactions-table">
+                    <thead>
+                        <tr>
+                            <th>তারিখ</th>
+                            <th>সদস্যের নাম</th>
+                            <th>ধরন</th>
+                            <th>পরিমাণ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- ডায়নামিক ডাটা আসবে -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- সদস্য ব্যবস্থাপনা সেকশন -->
+        <section id="members" class="content-section">
+            <h2>নতুন সদস্য যোগ করুন</h2>
+            <form id="member-form">
+                <input type="text" id="member-name" placeholder="সদস্যের নাম" required>
+                <input type="text" id="member-phone" placeholder="মোবাইল নম্বর" required>
+                <input type="number" id="member-loan" placeholder="ঋণের পরিমাণ (টাকা)" required>
+                <button type="submit">সদস্য যুক্ত করুন</button>
+            </form>
+
+            <h2 style="margin-top: 30px;">সদস্যদের তালিকা</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>আইডি</th>
+                        <th>নাম</th>
+                        <th>মোবাইল</th>
+                        <th>ঋণের পরিমাণ</th>
+                    </tr>
+                </thead>
+                <tbody id="members-list">
+                </tbody>
+            </table>
+        </section>
+
+        <!-- লেনদেন সেকশন -->
+        <section id="transactions" class="content-section">
+            <h2>নতুন কিস্তি/জমা এন্ট্রি</h2>
+            <form id="transaction-form">
+                <input type="text" id="trans-member-id" placeholder="সদস্য আইডি / নাম" required>
+                <select id="trans-type">
+                    <option value="কিস্তি আদায়">কিস্তি আদায়</option>
+                    <option value="সঞ্চয় জমা">সঞ্চয় জমা</option>
+                    <option value="ঋণ বিতরণ">ঋণ বিতরণ</option>
+                </select>
+                <input type="number" id="trans-amount" placeholder="পরিমাণ (টাকা)" required>
+                <button type="submit">এন্ট্রি সংরক্ষণ করুন</button>
+            </form>
+        </section>
+
+        <!-- নোটিশ বোর্ড সেকশন -->
+        <section id="notices" class="content-section">
+            <h2>অফিসিয়াল নোটিশ জারি করুন</h2>
+            <form id="notice-form">
+                <input type="text" id="notice-title" placeholder="নোটিশের শিরোনাম" required>
+                <textarea id="notice-body" placeholder="নোটিশের বিবরণ..." rows="4" required></textarea>
+                <button type="submit">প্রকাশ করুন</button>
+            </form>
+            <div id="notice-list" style="margin-top: 20px;"></div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>গ্রামীণ সেবা - অফিস ব্যবস্থাপনা সিস্টেম</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>গ্রামীণ সেবা</h2>
+        <p class="branch-tag">সোনালী মোড় শাখা, ধুলবাড়ী</p>
+        <ul>
+            <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fa-solid fa-chart-line"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="#" onclick="showSection('members')"><i class="fa-solid fa-users"></i> সদস্য ব্যবস্থাপনা</a></li>
+            <li><a href="#" onclick="showSection('transactions')"><i class="fa-solid fa-money-bill-transfer"></i> লেনদেন / কিস্তি</a></li>
+            <li><a href="#" onclick="showSection('notices')"><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>অফিস ব্যবস্থাপনা ড্যাশবোর্ড</h1>
+            <div class="user-info">
+                <span>শাখা ব্যবস্থাপক</span>
+            </div>
+        </header>
+
+        <!-- ড্যাশবোর্ড সেকশন -->
+        <section id="dashboard" class="content-section active">
+            <div class="cards">
+                <div class="card">
+                    <h3>মোট সদস্য</h3>
+                    <p id="total-members-count">0</p>
+                </div>
+                <div class="card">
+                    <h3>আজকের কালেকশন</h3>
+                    <p id="today-collection">৳ 0</p>
+                </div>
+                <div class="card">
+                    <h3>মোট প্রদানকৃত ঋণ</h3>
+                    <p id="total-loans">৳ 0</p>
+                </div>
+            </div>
+            
+            <div class="recent-activity">
+                <h2>সাম্প্রতিক লেনদেন</h2>
+                <table id="recent-transactions-table">
+                    <thead>
+                        <tr>
+                            <th>তারিখ</th>
+                            <th>সদস্যের নাম</th>
+                            <th>ধরন</th>
+                            <th>পরিমাণ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- ডায়নামিক ডাটা আসবে -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- সদস্য ব্যবস্থাপনা সেকশন -->
+        <section id="members" class="content-section">
+            <h2>নতুন সদস্য যোগ করুন</h2>
+            <form id="member-form">
+                <input type="text" id="member-name" placeholder="সদস্যের নাম" required>
+                <input type="text" id="member-phone" placeholder="মোবাইল নম্বর" required>
+                <input type="number" id="member-loan" placeholder="ঋণের পরিমাণ (টাকা)" required>
+                <button type="submit">সদস্য যুক্ত করুন</button>
+            </form>
+
+            <h2 style="margin-top: 30px;">সদস্যদের তালিকা</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>আইডি</th>
+                        <th>নাম</th>
+                        <th>মোবাইল</th>
+                        <th>ঋণের পরিমাণ</th>
+                    </tr>
+                </thead>
+                <tbody id="members-list">
+                </tbody>
+            </table>
+        </section>
+
+        <!-- লেনদেন সেকশন -->
+        <section id="transactions" class="content-section">
+            <h2>নতুন কিস্তি/জমা এন্ট্রি</h2>
+            <form id="transaction-form">
+                <input type="text" id="trans-member-id" placeholder="সদস্য আইডি / নাম" required>
+                <select id="trans-type">
+                    <option value="কিস্তি আদায়">কিস্তি আদায়</option>
+                    <option value="সঞ্চয় জমা">সঞ্চয় জমা</option>
+                    <option value="ঋণ বিতরণ">ঋণ বিতরণ</option>
+                </select>
+                <input type="number" id="trans-amount" placeholder="পরিমাণ (টাকা)" required>
+                <button type="submit">এন্ট্রি সংরক্ষণ করুন</button>
+            </form>
+        </section>
+
+        <!-- নোটিশ বোর্ড সেকশন -->
+        <section id="notices" class="content-section">
+            <h2>অফিসিয়াল নোটিশ জারি করুন</h2>
+            <form id="notice-form">
+                <input type="text" id="notice-title" placeholder="নোটিশের শিরোনাম" required>
+                <textarea id="notice-body" placeholder="নোটিশের বিবরণ..." rows="4" required></textarea>
+                <button type="submit">প্রকাশ করুন</button>
+            </form>
+            <div id="notice-list" style="margin-top: 20px;"></div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
