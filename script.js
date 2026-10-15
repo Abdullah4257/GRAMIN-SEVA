@@ -32,7 +32,27 @@ function formatDate(dateString) {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
-// সদস্য ভর্তি (ছবি সহ)
+// ঋণ ফিল্ড টগল ও লাভ সার্ভিস চার্জ হিসাব
+function toggleLoanFields() {
+    const type = document.getElementById('txn-type').value;
+    const extraFields = document.getElementById('loan-extra-fields');
+    if (type === 'loan_disburse') {
+        extraFields.style.display = 'block';
+    } else {
+        extraFields.style.display = 'none';
+    }
+}
+
+function calculateServiceCharge() {
+    const amount = parseFloat(document.getElementById('txn-amount').value) || 0;
+    const rate = parseFloat(document.getElementById('loan-profit-rate').value) || 0;
+    const chargeInput = document.getElementById('loan-service-charge');
+    
+    const calculatedCharge = amount * rate;
+    chargeInput.value = calculatedCharge;
+}
+
+// সদস্য ভর্তি
 function handleRegisterMember(e) {
     e.preventDefault();
     
@@ -52,6 +72,10 @@ function handleRegisterMember(e) {
 }
 
 function saveMemberData(photoBase64, formattedDate) {
+    const initSavings = parseFloat(document.getElementById('m-init-savings').value) || 0;
+    const initLoan = parseFloat(document.getElementById('m-init-loan').value) || 0;
+    const admissionFee = 20;
+
     const newMember = {
         id: 'GS-' + (1000 + members.length + 1),
         name: document.getElementById('m-name').value,
@@ -61,26 +85,29 @@ function saveMemberData(photoBase64, formattedDate) {
         nid: document.getElementById('m-nid').value,
         center: document.getElementById('m-center').value,
         photo: photoBase64,
-        savings: parseFloat(document.getElementById('m-init-savings').value) || 0,
-        loan: parseFloat(document.getElementById('m-init-loan').value) || 0,
+        savings: initSavings,
+        loan: initLoan,
         status: 'সক্রিয়',
         joinedDate: formattedDate,
         history: []
     };
 
-    if(newMember.savings > 0) {
-        newMember.history.push({ date: formattedDate, type: 'প্রাথমিক সঞ্চয় জমা', amount: newMember.savings });
-        transactions.push({ memberName: newMember.name, center: newMember.center, type: 'প্রাথমিক সঞ্চয় জমা', amount: newMember.savings, date: formattedDate });
+    newMember.history.push({ date: formattedDate, type: 'সদস্য ভর্তি ফি', amount: admissionFee });
+    transactions.push({ memberName: newMember.name, center: newMember.center, type: 'সদস্য ভর্তি ফি', amount: admissionFee, date: formattedDate });
+
+    if(initSavings > 0) {
+        newMember.history.push({ date: formattedDate, type: 'প্রাথমিক সঞ্চয় জমা', amount: initSavings });
+        transactions.push({ memberName: newMember.name, center: newMember.center, type: 'প্রাথমিক সঞ্চয় জমা', amount: initSavings, date: formattedDate });
     }
-    if(newMember.loan > 0) {
-        newMember.history.push({ date: formattedDate, type: 'প্রারম্ভিক ঋণ প্রদান', amount: newMember.loan });
-        transactions.push({ memberName: newMember.name, center: newMember.center, type: 'প্রারম্ভিক ঋণ প্রদান', amount: newMember.loan, date: formattedDate });
+    if(initLoan > 0) {
+        newMember.history.push({ date: formattedDate, type: 'প্রারম্ভিক ঋণ প্রদান', amount: initLoan });
+        transactions.push({ memberName: newMember.name, center: newMember.center, type: 'প্রারম্ভিক ঋণ প্রদান', amount: initLoan, date: formattedDate });
     }
 
     members.push(newMember);
     saveData();
 
-    alert('সদস্য ভর্তি সফল হয়েছে! আইডি: ' + newMember.id);
+    alert(`সদস্য ভর্তি সফল হয়েছে! আইডি: ${newMember.id} (ভর্তি ফি: ২০৳ কাটা হয়েছে)`);
     document.getElementById('member-form').reset();
     document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
     
@@ -90,7 +117,7 @@ function saveMemberData(photoBase64, formattedDate) {
     renderCenterView();
 }
 
-// কেন্দ্রভিত্তিক দৃশ্য
+// কেন্দ্রভিত্তিক ভিউ
 function renderCenterView() {
     const centerFilterEl = document.getElementById('center-filter');
     if(!centerFilterEl) return;
@@ -228,13 +255,30 @@ function handleTransaction(e) {
     if (!member) return;
 
     let txnLabel = '';
-    if (type === 'savings_deposit') { member.savings += amount; txnLabel = 'সঞ্চয় জমা'; }
+    let extraDetails = '';
+
+    if (type === 'savings_deposit') { 
+        member.savings += amount; 
+        txnLabel = 'সঞ্চয় জমা'; 
+    }
     else if (type === 'savings_withdraw') {
         if(member.savings < amount) return alert('সদস্যের পর্যাপ্ত সঞ্চয় নেই!');
-        member.savings -= amount; txnLabel = 'সঞ্চয় উত্তোলন';
+        member.savings -= amount; 
+        txnLabel = 'সঞ্চয় উত্তোলন';
     }
-    else if (type === 'loan_repay') { member.loan = Math.max(0, member.loan - amount); txnLabel = 'ঋণের কিস্তি জমা'; }
-    else if (type === 'loan_disburse') { member.loan += amount; txnLabel = 'নতুন ঋণ বিতরণ'; }
+    else if (type === 'loan_repay') { 
+        member.loan = Math.max(0, member.loan - amount); 
+        txnLabel = 'ঋণের কিস্তি জমা'; 
+    }
+    else if (type === 'loan_disburse') { 
+        const serviceCharge = parseFloat(document.getElementById('loan-service-charge').value) || 0;
+        const installType = document.getElementById('loan-install-type').value;
+        const totalLoanWithCharge = amount + serviceCharge;
+        
+        member.loan += totalLoanWithCharge; 
+        txnLabel = `নতুন ঋণ বিতরণ (${installType})`;
+        extraDetails = `<p><b>মূল ঋণ:</b> ৳ ${amount} | <b>সার্ভিস চার্জ/লাভ:</b> ৳ ${serviceCharge}</p><p><b>মোট ঋণ (মূল+চার্জ):</b> ৳ ${totalLoanWithCharge}</p>`;
+    }
 
     member.history.push({ date: txnDate, type: txnLabel, amount: amount });
     transactions.push({ memberName: member.name, center: member.center, type: txnLabel, amount: amount, date: txnDate });
@@ -247,12 +291,14 @@ function handleTransaction(e) {
         <p><b>গ্রাম/কেন্দ্র:</b> ${member.center}</p>
         <p><b>লেনদেনের বিবরণ:</b> ${txnLabel}</p>
         <p><b>টাকার পরিমাণ:</b> ৳ ${amount} /-</p>
+        ${extraDetails}
         <p><b>সর্বমোট সঞ্চয় স্থিতি:</b> ৳ ${member.savings}</p>
         <p><b>অবশিষ্ট ঋণ স্থিতি:</b> ৳ ${member.loan}</p>
     `;
 
     document.getElementById('txn-form').reset();
     document.getElementById('txn-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('loan-extra-fields').style.display = 'none';
     
     updateDashboardStats();
     renderMembersTable();
