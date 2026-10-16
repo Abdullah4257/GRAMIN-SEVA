@@ -17,13 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCenterView();
 });
 
-function switchTab(tabId) {
+function switchTab(tabId, evt) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
     
     const targetTab = document.getElementById(tabId);
     if(targetTab) targetTab.classList.add('active');
-    if(event && event.currentTarget) event.currentTarget.classList.add('active');
+    
+    if(evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+    }
 }
 
 function formatDate(dateString) {

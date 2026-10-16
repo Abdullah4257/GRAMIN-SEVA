@@ -20,13 +20,13 @@
                 <p>হুগড়া ইউনিয়ন শাখা, টাঙ্গাইল সদর</p>
             </div>
             <nav class="menu">
-                <button class="nav-btn active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-line"></i> ড্যাশবোর্ড</button>
-                <button class="nav-btn" onclick="switchTab('centers')"><i class="fa-solid fa-map-location-dot"></i> কেন্দ্র ব্যবস্থাপনা (গ্রামভিত্তিক)</button>
-                <button class="nav-btn" onclick="switchTab('members')"><i class="fa-solid fa-users"></i> সদস্য তালিকা ও প্রোফাইল</button>
-                <button class="nav-btn" onclick="switchTab('add-member')"><i class="fa-solid fa-user-plus"></i> নতুন সদস্য ভর্তি</button>
-                <button class="nav-btn" onclick="switchTab('savings-loan')"><i class="fa-solid fa-money-bill-transfer"></i> সঞ্চয় ও ঋণ লেনদেন</button>
-                <button class="nav-btn" onclick="switchTab('archive')"><i class="fa-solid fa-box-archive"></i> বাতিল/আর্কাইভ সদস্য</button>
-                <button class="nav-btn" onclick="switchTab('notices')"><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</button>
+                <button class="nav-btn active" onclick="switchTab('dashboard', event)"><i class="fa-solid fa-chart-line"></i> ড্যাশবোর্ড</button>
+                <button class="nav-btn" onclick="switchTab('centers', event)"><i class="fa-solid fa-map-location-dot"></i> কেন্দ্র ব্যবস্থাপনা (গ্রামভিত্তিক)</button>
+                <button class="nav-btn" onclick="switchTab('members', event)"><i class="fa-solid fa-users"></i> সদস্য তালিকা ও প্রোফাইল</button>
+                <button class="nav-btn" onclick="switchTab('add-member', event)"><i class="fa-solid fa-user-plus"></i> নতুন সদস্য ভর্তি</button>
+                <button class="nav-btn" onclick="switchTab('savings-loan', event)"><i class="fa-solid fa-money-bill-transfer"></i> সঞ্চয় ও ঋণ লেনদেন</button>
+                <button class="nav-btn" onclick="switchTab('archive', event)"><i class="fa-solid fa-box-archive"></i> বাতিল/আর্কাইভ সদস্য</button>
+                <button class="nav-btn" onclick="switchTab('notices', event)"><i class="fa-solid fa-bullhorn"></i> নোটিশ বোর্ড</button>
             </nav>
         </aside>
 
@@ -43,7 +43,7 @@
                 </div>
             </header>
 
-            <!-- ড্যাশবোর্ড -->
+            <!-- ১. ড্যাশবোর্ড -->
             <section id="dashboard" class="tab-content active">
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -97,7 +97,7 @@
                 </div>
             </section>
 
-            <!-- কেন্দ্র ব্যবস্থাপনা -->
+            <!-- ২. কেন্দ্র ব্যবস্থাপনা -->
             <section id="centers" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-map-location-dot"></i> গ্রাম ও বাজারভিত্তিক কেন্দ্র নির্বাচন</h2>
@@ -131,7 +131,7 @@
                 </div>
             </section>
 
-            <!-- সদস্য তালিকা -->
+            <!-- ৩. সদস্য তালিকা -->
             <section id="members" class="tab-content">
                 <div class="card">
                     <div class="table-header">
@@ -158,7 +158,7 @@
                 </div>
             </section>
 
-            <!-- নতুন সদস্য ভর্তি -->
+            <!-- ৪. নতুন সদস্য ভর্তি -->
             <section id="add-member" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-user-plus"></i> নতুন সদস্য ভর্তি ফরম (ভর্তি ফি: ২০ টাকা)</h2>
@@ -232,7 +232,7 @@
                 </div>
             </section>
 
-            <!-- সঞ্চয় ও ঋণ লেনদেন -->
+            <!-- ৫. সঞ্চয় ও ঋণ লেনদেন -->
             <section id="savings-loan" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-money-bill-transfer"></i> সঞ্চয় ও ঋণ লেনদেন এবং লাভ/সার্ভিস চার্জ পোস্টিং</h2>
@@ -292,7 +292,7 @@
                 </div>
             </section>
 
-            <!-- আর্কাইভ -->
+            <!-- ৬. আর্কাইভ -->
             <section id="archive" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-box-archive"></i> বাতিলকৃত সদস্য তালিকা</h2>
@@ -313,7 +313,7 @@
                 </div>
             </section>
 
-            <!-- নোটিশ বোর্ড -->
+            <!-- ৭. নোটিশ বোর্ড -->
             <section id="notices" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-bullhorn"></i> অফিস নোটিশ প্রকাশ</h2>
@@ -328,4 +328,4 @@
                         </div>
                         <div class="form-group">
                             <label>বিস্তারিত</label>
-                            <textarea id="notice-body" rows="3" required></textarea>
+                            <textarea
