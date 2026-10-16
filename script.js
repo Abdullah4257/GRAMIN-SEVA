@@ -21,8 +21,9 @@ function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
     
-    document.getElementById(tabId).classList.add('active');
-    event.currentTarget.classList.add('active');
+    const targetTab = document.getElementById(tabId);
+    if(targetTab) targetTab.classList.add('active');
+    if(event && event.currentTarget) event.currentTarget.classList.add('active');
 }
 
 function formatDate(dateString) {
@@ -32,7 +33,6 @@ function formatDate(dateString) {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
-// ঋণ ফিল্ড টগল ও লাভ সার্ভিস চার্জ হিসাব
 function toggleLoanFields() {
     const type = document.getElementById('txn-type').value;
     const extraFields = document.getElementById('loan-extra-fields');
@@ -47,20 +47,16 @@ function calculateServiceCharge() {
     const amount = parseFloat(document.getElementById('txn-amount').value) || 0;
     const rate = parseFloat(document.getElementById('loan-profit-rate').value) || 0;
     const chargeInput = document.getElementById('loan-service-charge');
-    
-    const calculatedCharge = amount * rate;
-    chargeInput.value = calculatedCharge;
+    chargeInput.value = amount * rate;
 }
 
-// সদস্য ভর্তি
 function handleRegisterMember(e) {
     e.preventDefault();
-    
     const photoInput = document.getElementById('m-photo');
     const rawDate = document.getElementById('m-date').value;
     const formattedDate = formatDate(rawDate);
 
-    if (photoInput.files && photoInput.files[0]) {
+    if (photoInput && photoInput.files && photoInput.files[0]) {
         const reader = new FileReader();
         reader.onload = function (uploadEvent) {
             saveMemberData(uploadEvent.target.result, formattedDate);
@@ -107,7 +103,7 @@ function saveMemberData(photoBase64, formattedDate) {
     members.push(newMember);
     saveData();
 
-    alert(`সদস্য ভর্তি সফল হয়েছে! আইডি: ${newMember.id} (ভর্তি ফি: ২০৳ কাটা হয়েছে)`);
+    alert(`সদস্য ভর্তি সফল হয়েছে! আইডি: ${newMember.id}`);
     document.getElementById('member-form').reset();
     document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
     
@@ -117,7 +113,6 @@ function saveMemberData(photoBase64, formattedDate) {
     renderCenterView();
 }
 
-// কেন্দ্রভিত্তিক ভিউ
 function renderCenterView() {
     const centerFilterEl = document.getElementById('center-filter');
     if(!centerFilterEl) return;

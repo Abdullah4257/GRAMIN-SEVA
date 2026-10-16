@@ -30,12 +30,12 @@
             </nav>
         </aside>
 
-        <!-- মূল কন্টেন্ট এলাকা -->
+        <!-- মূল কন্টেন্ট -->
         <main class="main-content">
             <header class="top-header">
                 <h1 id="page-title">অফিস ব্যবস্থাপনা ড্যাশবোর্ড</h1>
                 <div class="header-right">
-                    <button class="btn btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> পেজ প্রিন্ট করুন</button>
+                    <button class="btn btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> প্রিন্ট করুন</button>
                     <div class="user-profile">
                         <i class="fa-solid fa-user-tie"></i>
                         <span>শাখা ব্যবস্থাপক (পিন ০২)</span>
@@ -43,7 +43,7 @@
                 </div>
             </header>
 
-            <!-- ১. ড্যাশবোর্ড সেকশন -->
+            <!-- ড্যাশবোর্ড -->
             <section id="dashboard" class="tab-content active">
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -70,7 +70,7 @@
                     <div class="stat-card">
                         <i class="fa-solid fa-coins stat-icon icon-purple"></i>
                         <div>
-                            <p>আজকের মোট কালেকশন/পোস্টিং</p>
+                            <p>আজকের মোট কালেকশন</p>
                             <h3 id="stat-today-collection">৳ ০</h3>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                 </div>
             </section>
 
-            <!-- ২. গ্রামভিত্তিক কেন্দ্র ব্যবস্থাপনা -->
+            <!-- কেন্দ্র ব্যবস্থাপনা -->
             <section id="centers" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-map-location-dot"></i> গ্রাম ও বাজারভিত্তিক কেন্দ্র নির্বাচন</h2>
@@ -131,7 +131,7 @@
                 </div>
             </section>
 
-            <!-- ৩. সদস্য তালিকা ও প্রোফাইল -->
+            <!-- সদস্য তালিকা -->
             <section id="members" class="tab-content">
                 <div class="card">
                     <div class="table-header">
@@ -158,7 +158,7 @@
                 </div>
             </section>
 
-            <!-- ৪. নতুন সদস্য ভর্তি ফরম -->
+            <!-- নতুন সদস্য ভর্তি -->
             <section id="add-member" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-user-plus"></i> নতুন সদস্য ভর্তি ফরম (ভর্তি ফি: ২০ টাকা)</h2>
@@ -211,8 +211,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>সদস্যের ছবি *</label>
-                                <input type="file" id="m-photo" accept="image/*" required>
+                                <label>সদস্যের ছবি (ঐচ্ছিক)</label>
+                                <input type="file" id="m-photo" accept="image/*">
                             </div>
                             <div class="form-group">
                                 <label>ভর্তির তারিখ *</label>
@@ -232,7 +232,7 @@
                 </div>
             </section>
 
-            <!-- ৫. সঞ্চয় ও ঋণ লেনদেন -->
+            <!-- সঞ্চয় ও ঋণ লেনদেন -->
             <section id="savings-loan" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-money-bill-transfer"></i> সঞ্চয় ও ঋণ লেনদেন এবং লাভ/সার্ভিস চার্জ পোস্টিং</h2>
@@ -259,14 +259,14 @@
                             </div>
                             <div class="form-group">
                                 <label>মূল টাকার পরিমাণ (৳) *</label>
-                                <input type="number" id="txn-amount" min="1" required placeholder="টাকার পরিমাণ লিখুন">
+                                <input type="number" id="txn-amount" min="1" required placeholder="টাকার পরিমাণ লিখুন" oninput="calculateServiceCharge()">
                             </div>
                             
-                            <!-- ঋণ বিতরণের অতিরিক্ত অপশন -->
+                            <!-- ঋণ অতিরিক্ত অপশন -->
                             <div id="loan-extra-fields" style="display: none; grid-column: 1 / -1; background: #eef7f2; padding: 15px; border-radius: 8px; border: 1px solid #cce5dc;">
                                 <div class="form-grid" style="margin: 0;">
                                     <div class="form-group">
-                                        <label>লাভের মেয়াদ ও হার সিলেক্ট করুন *</label>
+                                        <label>লাভের মেয়াদ ও হার সিলেক্ট করুন</label>
                                         <select id="loan-profit-rate" onchange="calculateServiceCharge()">
                                             <option value="0">লাভ ছাড়া / সাধারণ</option>
                                             <option value="0.15">১ বছরে ১৫% লাভ</option>
@@ -274,11 +274,11 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>সার্ভিস চার্জ / মোট লাভ (৳) *</label>
+                                        <label>সার্ভিস চার্জ / মোট লাভ (৳)</label>
                                         <input type="number" id="loan-service-charge" value="0" min="0" placeholder="সার্ভিস চার্জ পরিমাণ">
                                     </div>
                                     <div class="form-group">
-                                        <label>কিস্তির ধরণ *</label>
+                                        <label>কিস্তির ধরণ</label>
                                         <select id="loan-install-type">
                                             <option value="সাপ্তাহিক কিস্তি">সাপ্তাহিক কিস্তি</option>
                                             <option value="মাসিক কিস্তি">মাসিক কিস্তি</option>
@@ -292,10 +292,10 @@
                 </div>
             </section>
 
-            <!-- ৬. আর্কাইভ / বাতিলকৃত সদস্য -->
+            <!-- আর্কাইভ -->
             <section id="archive" class="tab-content">
                 <div class="card">
-                    <h2><i class="fa-solid fa-box-archive"></i> বাতিলকৃত বা আর্কাইভড সদস্য তালিকা</h2>
+                    <h2><i class="fa-solid fa-box-archive"></i> বাতিলকৃত সদস্য তালিকা</h2>
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -313,7 +313,7 @@
                 </div>
             </section>
 
-            <!-- ৭. নোটিশ বোর্ড -->
+            <!-- নোটিশ বোর্ড -->
             <section id="notices" class="tab-content">
                 <div class="card">
                     <h2><i class="fa-solid fa-bullhorn"></i> অফিস নোটিশ প্রকাশ</h2>
@@ -328,3 +328,4 @@
                         </div>
                         <div class="form-group">
                             <label>বিস্তারিত</label>
+                            <textarea id="notice-body" rows="3" required></textarea>
